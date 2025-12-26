@@ -1,0 +1,32 @@
+{
+	"name": "api",
+	"version": "1.0.0",
+	"description": "session based authentication with express-sessions and mongodb as store.",
+	"homepage": "https://github.com/rambabu-patidar/learning-authentication#readme",
+	"bugs": {
+		"url": "https://github.com/rambabu-patidar/learning-authentication/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/rambabu-patidar/learning-authentication.git"
+	},
+	"license": "MIT",
+	"author": "Rambabu Patidar",
+	"type": "commonjs",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "nodemon index.js"
+	},
+	"dependencies": {
+		"bcryptjs": "^3.0.3",
+		"connect-mongo": "^6.0.0",
+		"dotenv": "^17.2.3",
+		"express": "^5.2.1",
+		"express-session": "^1.18.2",
+		"mongoose": "^9.0.2"
+	},
+	"devDependencies": {
+		"nodemon": "^3.1.11"
+	}
+}
