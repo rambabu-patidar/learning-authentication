@@ -1,0 +1,18 @@
+.navigation ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  font-size: large;
+  background-color: rgb(55, 55, 55);
+  margin: 1rem 0;
+}
+
+.navigation ul li {
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.navigation ul li:hover {
+  color: yellow;
+}
