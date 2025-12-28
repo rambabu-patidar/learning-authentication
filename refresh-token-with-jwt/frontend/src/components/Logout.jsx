@@ -1,11 +1,26 @@
-import React from "react";
+import React, { useContext } from "react";
+import tokenContext from "../store/contextStore";
+import useAxiosPrivate from "../api/useAxiosPrivate";
 
 const Logout = () => {
+	const axiosPrivate = useAxiosPrivate();
+	const tokenAccessContext = useContext(tokenContext);
+
 	const logoutUserHandler = (event) => {
 		event.preventDefault();
 
-		// call the api to logout the user
-		//
+		axiosPrivate
+			.post("/auth/logout")
+			.then((response) => {
+				console.log(response.data.message);
+
+				tokenAccessContext.setAccessToken(null);
+				return;
+			})
+			.catch((error) => {
+				console.log("Failed to log you out! Please try again");
+				console.log(error.message);
+			});
 	};
 
 	return (

@@ -21,7 +21,7 @@ const Register = () => {
 		console.log(name, username, password);
 		// call the api to save the user in the database.
 		axios
-			.post("http://localhost:5000/api/auth/register", {
+			.post("https://localhost:5000/api/auth/register", {
 				name,
 				username,
 				password,

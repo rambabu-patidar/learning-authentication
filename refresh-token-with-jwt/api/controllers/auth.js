@@ -93,8 +93,8 @@ exports.postLogin = (req, res, next) => {
 
 			res.cookie("learn-jwt-refresh-token", refreshTokenGlobal, {
 				httpOnly: true,
-				secure: false,
-				sameSite: "lax",
+				secure: true,
+				sameSite: "none",
 				maxAge: 7 * 24 * 60 * 60 * 1000,
 			});
 
@@ -118,34 +118,71 @@ exports.getAccessToken = (req, res, next) => {
 	}
 
 	const refreshToken = cookies["learn-jwt-refresh-token"];
-
 	jwt.verify(
 		refreshToken,
 		process.env.REFRESH_TOKEN_SECRET,
 		(error, decoded) => {
 			if (error) {
 				console.log("Refresh Token doesn't match!");
-				return res.status(401).json({ message: "Unauthorized" });
+				return res
+					.status(401)
+					.json({ message: "Unauthorized: Token doesn't match" });
 			}
 
-			const foundUser = User.findById(decoded.id);
-
-			if (!foundUser || refreshToken !== foundUser.refreshToken) {
-				console.log("Refresh token doesn't match");
-				return res.status(401).json({ message: "Unauthorized" });
-			}
-
-			const accessToken = jwt.sign(
-				{ id: foundUser._id },
-				process.env.ACCESS_TOKEN_SECRET,
-				{
-					expiresIn: "5m",
+			return User.findById(decoded.id).then((foundUser) => {
+				if (!foundUser || refreshToken !== foundUser.refreshToken) {
+					console.log("Refresh token doesn't match");
+					return res.status(401).json({
+						message: "Unauthorized: User with this token doesn't exists",
+					});
 				}
-			);
 
-			return res.status(200).json({ accessToken: accessToken });
+				const accessToken = jwt.sign(
+					{ id: foundUser._id },
+					process.env.ACCESS_TOKEN_SECRET,
+					{
+						expiresIn: "5m",
+					}
+				);
+
+				return res.status(200).json({ accessToken: accessToken });
+			});
 		}
 	);
 };
 
-exports.postLogout = (req, res, next) => {};
+exports.postLogout = (req, res, next) => {
+	// invalidate the refresh token and access token
+	// remove refresh token from the users object
+
+	const refreshToken = req.cookies["learn-jwt-refresh-token"];
+
+	if (refreshToken) {
+		return User.findOneAndUpdate(
+			{ refreshToken },
+			{ $unset: { refreshToken: 1 } }
+		)
+			.then((response) => {
+				console.log("Removed the refresh token from DB");
+				// now clear the response cookie
+
+				res.clearCookie("learn-jwt-refresh-token", {
+					httpOnly: true,
+					secure: true,
+					sameSite: "none",
+					path: "/",
+				});
+
+				return res
+					.status(200)
+					.json({ messaage: "You're logged out successfully!" });
+			})
+			.catch((error) => {
+				const err = new Error(
+					"Can't log you out, something went wrong! " + error.message
+				);
+				err.statusCode = 500;
+				return next(err);
+			});
+	}
+};

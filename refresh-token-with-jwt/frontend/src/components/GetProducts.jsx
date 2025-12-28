@@ -6,7 +6,7 @@ const GetProducts = () => {
 	const [products, setProducts] = useState([]);
 	useEffect(() => {
 		axios
-			.get("http://localhost:5000/api/products")
+			.get("https://localhost:5000/api/products")
 			.then((result) => {
 				const products = result.data.products;
 				if (!products || products.length === 0) {

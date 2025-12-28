@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import TokenContext from "./contextStore";
 
 const TokenProvider = (props) => {
 	const [accessToken, setAccessToken] = useState(undefined);
 
-	const setAccessTokenHandler = (accessToken) => {
+	const setAccessTokenHandler = useCallback((accessToken) => {
 		setAccessToken(accessToken);
-	};
+	}, []);
 
 	const tokenContext = {
 		accessToken: accessToken,

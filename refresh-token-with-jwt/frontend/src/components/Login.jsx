@@ -1,8 +1,9 @@
 import React, { useRef, useContext } from "react";
-import axios from "axios";
+import useAxiosPrivate from "../api/useAxiosPrivate";
 import tokenContext from "../store/contextStore";
 
 const Login = () => {
+	const axiosPrivate = useAxiosPrivate();
 	const usernameRef = useRef();
 	const passwordRef = useRef();
 	const accessTokenContext = useContext(tokenContext);
@@ -20,8 +21,8 @@ const Login = () => {
 		console.log(username, password);
 
 		// now calll the api for logging in
-		axios
-			.post("http://localhost:5000/api/auth/login", {
+		axiosPrivate
+			.post("https://localhost:5000/api/auth/login", {
 				username,
 				password,
 			})
@@ -37,7 +38,8 @@ const Login = () => {
 				console.log(error);
 				console.log("Couldn't log you in");
 				throw new Error(
-					"Couldn't log you in, try again! " + error.response.data.errorMessage
+					"Couldn't log you in, try again! " +
+						error.response?.data?.errorMessage
 				);
 			});
 
